@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 리스트</title>
+</head>
+<body>
+<h1>게시판</h1>
+<div th:text="${list}"></div>
+<a href="/write">글쓰기</a>
+<table border="1">
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>미리보기</th>
+        <th>첨부파일</th>
+    </tr>
+    <tr th:each="item : ${list}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.title}"></td>
+        <td><img th:src="${item.fileUrl}" style="max-width:100px; max-height:100px;"></td>
+        <td>
+            <a th:href="${item.fileUrl}" th:text="${item.filename}" target="_blank"></a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

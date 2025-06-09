@@ -1,0 +1,56 @@
+name: Deploy To EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK 17버전 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: application.properties 파일 생성
+        run: echo "${{ secrets.APPLICATION_PROPERTIES}}" >> ./src/main/resources/application.properties
+
+      - name: 실행권한 주기 for gradlew
+        run: chmod +x ./gradlew
+
+      - name: 빌드하기
+        run: ./gradlew clean build -x test
+
+      - name: 빌드된 파일 이름 변경
+        run: mv ./build/libs/*SNAPSHOT.jar ./s3board.jar
+
+      - name: SCP로 EC2에 빌드된 파일 전송
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }} # EC2의 주소
+          username: ${{ secrets.EC2_USERNAME }} # EC2 접속 username
+          key: ${{ secrets.EC2_PRIVATE_KEY }} # EC2의 Key 파일의 내부 텍스트
+          source: s3board.jar
+          target: /home/ubuntu/s3board/targetdir
+
+      - name: SSH로 EC2에 접속 - 이전에 jdk를 먼저 설치
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            set -e
+            rm -rf /home/ubuntu/s3board/current
+            mkdir /home/ubuntu/s3board/current
+            mv /home/ubuntu/s3board/targetdir/s3board.jar /home/ubuntu/s3board/current/s3board.jar
+            cd /home/ubuntu/s3board/current
+            sudo fuser -k -n tcp 8080 || true
+            nohup java -Duser.timezone=Asia/Seoul -jar s3board.jar > output.log 2>&1 & 
+            rm -rf /home/ubuntu/s3board/targetdir
