@@ -29,6 +29,13 @@ jobs:
       - name: 빌드
         run: ./gradlew clean build -x test
 
+      - name: 빌드 후 파일 확인
+        run: ls -al ./build/libs
+
+      - name: 빌드 후 루트 디렉토리 확인
+        run: ls -al .
+
+
       - name: JAR 파일 이름 변경
         run: mv ./build/libs/*SNAPSHOT.jar ./s3board.jar
 

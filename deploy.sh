@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-APP_NAME=miniproject
-BASE_DIR=/home/ubuntu/boot25-board
+APP_NAME=s3board
+BASE_DIR=/home/ubuntu/s3board
 CURRENT_DIR=$BASE_DIR/current
 PREVIOUS_DIR=$BASE_DIR/previous
-TOBE_DIR=$BASE_DIR/tobe
+TOBE_DIR=$BASE_DIR/targetdir
 PORT1=8080
 PORT2=8081
 
