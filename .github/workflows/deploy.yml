@@ -39,6 +39,9 @@ jobs:
       - name: JAR 파일 이름 변경
         run: mv ./build/libs/*SNAPSHOT.jar ./s3board.jar
 
+      - name: deply.sh 복사
+        run: mv ./deploy.sh ./deploy.sh
+
       - name: SCP로 파일 전송 (JAR + deploy.sh)
         uses: appleboy/scp-action@v1
         with:
