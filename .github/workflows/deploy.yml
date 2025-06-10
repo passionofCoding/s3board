@@ -45,7 +45,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: s3board.jar, deply.sh
+          source: s3board.jar,deploy.sh
           target: /home/ubuntu/s3board/targetdir
 
       - name: SSH로 배포 스크립트 실행
